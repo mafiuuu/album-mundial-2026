@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Álbum Mundial 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800&display=swap');
+
+:root {
+--verde: #1a472a;
+--verde-claro: #2d6a4f;
+--dorado: #f4a829;
+--dorado-suave: #ffd166;
+--rojo: #e63946;
+--blanco: #f8f9fa;
+--gris: #e9ecef;
+--gris-texto: #6c757d;
+--sombra: rgba(0,0,0,0.15);
+--bg: #f0f2f0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+font-family: ‘Nunito’, sans-serif;
+background: var(--bg);
+min-height: 100vh;
+color: #1a1a2e;
+}
+
+header {
+background: linear-gradient(135deg, var(--verde) 0%, var(--verde-claro) 100%);
+color: white;
+padding: 16px;
+text-align: center;
+position: sticky;
+top: 0;
+z-index: 100;
+box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+header h1 {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 2rem;
+letter-spacing: 2px;
+line-height: 1;
+color: var(--dorado);
+}
+
+header p { font-size: 0.75rem; opacity: 0.85; margin-top: 2px; }
+
+.stats-bar {
+background: white;
+padding: 12px 16px;
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 8px;
+border-bottom: 3px solid var(--dorado);
+box-shadow: 0 2px 8px var(--sombra);
+}
+
+.stat-item { text-align: center; }
+
+.stat-num {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 1.6rem;
+line-height: 1;
+color: var(--verde);
+}
+
+.stat-num.red { color: var(--rojo); }
+.stat-num.gold { color: #c17f00; }
+.stat-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-texto); font-weight: 700; }
+
+.progress-bar-wrap { background: var(--gris); height: 8px; border-radius: 4px; margin: 0 16px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--verde), var(--dorado)); border-radius: 4px; transition: width 0.5s ease; }
+.progress-label { text-align: center; font-size: 0.7rem; color: var(--gris-texto); padding: 4px 0 8px; font-weight: 700; }
+
+.dinero-bar {
+background: linear-gradient(135deg, #fff8e7, #fff3cc);
+border: 2px solid var(--dorado-suave);
+margin: 8px 16px;
+border-radius: 12px;
+padding: 10px 16px;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+}
+
+.dinero-bar .icon { font-size: 1.3rem; }
+.dinero-bar .texto { font-size: 0.8rem; color: #7a5c00; font-weight: 700; }
+.dinero-bar .monto { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.4rem; color: #c17f00; }
+
+.search-wrap { padding: 10px 16px 6px; }
+
+.search-box {
+width: 100%;
+padding: 10px 14px;
+border-radius: 12px;
+border: 2px solid var(--gris);
+font-family: ‘Nunito’, sans-serif;
+font-size: 0.9rem;
+font-weight: 700;
+outline: none;
+transition: border-color 0.2s;
+background: white;
+}
+
+.search-box:focus { border-color: var(--verde); }
+
+.search-results {
+background: white;
+border-radius: 12px;
+margin: 6px 16px 0;
+box-shadow: 0 4px 16px var(--sombra);
+overflow: hidden;
+display: none;
+}
+
+.search-result-item {
+padding: 10px 14px;
+border-bottom: 1px solid var(--gris);
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.search-result-item:last-child { border-bottom: none; }
+
+.search-result-item .left { display: flex; flex-direction: column; }
+.search-result-item .code { font-family: ‘Bebas Neue’, sans-serif; font-size: 1rem; color: var(--verde); letter-spacing: 1px; }
+.search-result-item .desc { font-size: 0.72rem; color: var(--gris-texto); }
+.search-result-item .btns { display: flex; gap: 6px; flex-shrink: 0; }
+
+.btn-mini {
+padding: 5px 10px;
+border: none;
+border-radius: 8px;
+font-family: ‘Nunito’, sans-serif;
+font-size: 0.7rem;
+font-weight: 800;
+cursor: pointer;
+white-space: nowrap;
+}
+
+.btn-tengo { background: var(--verde); color: white; }
+.btn-repetida { background: var(--dorado); color: #1a1a1a; }
+.btn-quitar { background: var(--rojo); color: white; }
+
+.legend {
+display: flex;
+gap: 12px;
+justify-content: center;
+padding: 8px 0 4px;
+font-size: 0.7rem;
+font-weight: 700;
+color: var(--gris-texto);
+flex-wrap: wrap;
+}
+
+.legend span { display: flex; align-items: center; gap: 4px; }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; border: 2px solid; }
+.dot-vacia { background: var(--gris); border-color: #ccc; }
+.dot-tengo { background: #d4edda; border-color: var(--verde-claro); }
+.dot-repetida { background: #fff3cd; border-color: var(--dorado); }
+
+.tabs {
+display: flex;
+padding: 8px 16px 0;
+overflow-x: auto;
+scrollbar-width: none;
+gap: 3px;
+}
+
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+padding: 7px 14px;
+border: none;
+background: var(--gris);
+font-family: ‘Nunito’, sans-serif;
+font-size: 0.75rem;
+font-weight: 800;
+cursor: pointer;
+border-radius: 8px 8px 0 0;
+white-space: nowrap;
+color: var(--gris-texto);
+letter-spacing: 0.5px;
+}
+
+.tab.active { background: var(--verde); color: white; }
+
+.content { padding: 0 16px 80px; }
+
+.section-card {
+background: white;
+border-radius: 0 12px 12px 12px;
+padding: 12px;
+margin-bottom: 10px;
+box-shadow: 0 2px 8px var(--sombra);
+}
+
+.section-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 10px;
+padding-bottom: 8px;
+border-bottom: 2px solid var(--gris);
+}
+
+.section-title { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.1rem; letter-spacing: 1px; color: var(--verde); }
+
+.section-progress {
+font-size: 0.7rem;
+font-weight: 800;
+color: var(--gris-texto);
+background: var(--gris);
+padding: 3px 8px;
+border-radius: 20px;
+}
+
+.section-progress.completo { background: #d4edda; color: #155724; }
+
+.stickers-grid {
+display: grid;
+grid-template-columns: repeat(5, 1fr);
+gap: 5px;
+}
+
+.sticker-cell {
+aspect-ratio: 1;
+border-radius: 6px;
+border: 2px solid var(--gris);
+background: var(--gris);
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+transition: all 0.15s;
+position: relative;
+overflow: hidden;
+-webkit-tap-highlight-color: transparent;
+user-select: none;
+}
+
+.sticker-cell:active { transform: scale(0.88); }
+
+.sticker-code {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 0.65rem;
+letter-spacing: 0.3px;
+line-height: 1;
+color: #555;
+text-align: center;
+padding: 2px;
+word-break: break-all;
+}
+
+.sticker-cell.tengo { background: linear-gradient(135deg, #d4edda, #a8d5b5); border-color: var(--verde-claro); }
+.sticker-cell.tengo .sticker-code { color: var(--verde); }
+
+.sticker-cell.repetida { background: linear-gradient(135deg, #fff3cd, #ffd166); border-color: var(--dorado); }
+.sticker-cell.repetida .sticker-code { color: #7a5c00; }
+
+.sticker-cell.tengo::after { content: ‘✓’; position: absolute; bottom: 1px; right: 2px; font-size: 0.5rem; color: var(--verde); font-weight: 900; }
+.sticker-cell.repetida::after { content: ‘+’; position: absolute; bottom: 0; right: 2px; font-size: 0.7rem; color: #c17f00; font-weight: 900; }
+
+.rep-count {
+position: absolute;
+top: -4px;
+right: -4px;
+background: var(--rojo);
+color: white;
+border-radius: 50%;
+width: 15px;
+height: 15px;
+font-size: 0.5rem;
+font-weight: 900;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.grupo-label {
+font-size: 0.65rem;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: 1px;
+color: var(--gris-texto);
+margin: 8px 0 4px;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* MODAL */
+.modal-overlay {
+display: none;
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.5);
+z-index: 200;
+align-items: flex-end;
+justify-content: center;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+background: white;
+border-radius: 20px 20px 0 0;
+padding: 20px;
+width: 100%;
+max-width: 480px;
+animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.modal-handle { width: 40px; height: 4px; background: var(--gris); border-radius: 2px; margin: 0 auto 16px; }
+.modal-title { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.4rem; color: var(--verde); letter-spacing: 1px; text-align: center; margin-bottom: 4px; }
+.modal-desc { font-size: 0.8rem; color: var(--gris-texto); text-align: center; margin-bottom: 16px; }
+
+.modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+
+.modal-btn {
+padding: 14px;
+border: none;
+border-radius: 12px;
+font-family: ‘Nunito’, sans-serif;
+font-size: 0.85rem;
+font-weight: 800;
+cursor: pointer;
+transition: transform 0.1s;
+}
+
+.modal-btn:active { transform: scale(0.97); }
+.btn-verde { background: var(--verde); color: white; }
+.btn-amarillo { background: var(--dorado); color: #1a1a1a; }
+.btn-gris { background: var(--gris); color: #555; grid-column: span 2; }
+.btn-rojo { background: var(--rojo); color: white; grid-column: span 2; }
+</style>
+
+</head>
+<body>
+
+<header>
+  <h1>⚽ Álbum Mundial 2026</h1>
+  <p>México · Estados Unidos · Canadá</p>
+</header>
+
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num" id="stat-tengo">0</div>
+    <div class="stat-label">Tengo</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num red" id="stat-faltan">0</div>
+    <div class="stat-label">Faltan</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num gold" id="stat-repetidas">0</div>
+    <div class="stat-label">Repetidas</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="stat-total">0</div>
+    <div class="stat-label">Total</div>
+  </div>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+</div>
+<div class="progress-label" id="progress-label">0% completado</div>
+
+<div class="dinero-bar">
+  <span class="icon">💰</span>
+  <span class="texto">Gastaste en sobres:</span>
+  <span class="monto" id="dinero-total">$0</span>
+</div>
+
+<div class="search-wrap">
+  <input type="text" class="search-box" id="search-input" placeholder="🔍 Buscar: ARG 10, FWC 3, CC 1..." autocomplete="off">
+</div>
+<div class="search-results" id="search-results"></div>
+
+<div class="legend">
+  <span><div class="legend-dot dot-vacia"></div> Sin figurita</span>
+  <span><div class="legend-dot dot-tengo"></div> Tengo ✓</span>
+  <span><div class="legend-dot dot-repetida"></div> Repetida +</span>
+</div>
+
+<div class="tabs" id="tabs-bar"></div>
+<div class="content" id="content"></div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-desc" id="modal-desc"></div>
+    <div class="modal-btns">
+      <button class="modal-btn btn-verde" id="btn-tengo">✓ La tengo</button>
+      <button class="modal-btn btn-amarillo" id="btn-repetida">+ Repetida</button>
+      <button class="modal-btn btn-rojo" id="btn-quitar" style="display:none">✗ Quitar figurita</button>
+    </div>
+    <button class="modal-btn btn-gris" id="btn-cancelar">Cancelar</button>
+  </div>
+</div>
+
+<script>
+const EQUIPOS = {
+  A: ['México','Sudáfrica','Corea del Sur','Rep. Checa'],
+  B: ['Canadá','Suiza','Qatar','Bosnia y Herz.'],
+  C: ['Brasil','Marruecos','Haití','Escocia'],
+  D: ['Estados Unidos','Paraguay','Australia','Turquía'],
+  E: ['Alemania','Curazao','Costa de Marfil','Ecuador'],
+  F: ['Países Bajos','Japón','Suecia','Túnez'],
+  G: ['Bélgica','Egipto','Irán','Nueva Zelanda'],
+  H: ['España','Uruguay','Arabia Saudita','Cabo Verde'],
+  I: ['Francia','Senegal','Noruega','Iraq'],
+  J: ['Argentina','Argelia','Austria','Jordania'],
+  K: ['Portugal','Colombia','Uzbekistán','Congo DR'],
+  L: ['Inglaterra','Croacia','Panamá','Ghana'],
+};
+
+const CODIGOS = {
+  'México':'MEX','Sudáfrica':'RSA','Corea del Sur':'KOR','Rep. Checa':'CZE',
+  'Canadá':'CAN','Suiza':'SUI','Qatar':'QAT','Bosnia y Herz.':'BIH',
+  'Brasil':'BRA','Marruecos':'MAR','Haití':'HAI','Escocia':'SCO',
+  'Estados Unidos':'USA','Paraguay':'PAR','Australia':'AUS','Turquía':'TUR',
+  'Alemania':'GER','Curazao':'CUW','Costa de Marfil':'CIV','Ecuador':'ECU',
+  'Países Bajos':'NED','Japón':'JPN','Suecia':'SWE','Túnez':'TUN',
+  'Bélgica':'BEL','Egipto':'EGY','Irán':'IRN','Nueva Zelanda':'NZL',
+  'España':'ESP','Uruguay':'URU','Arabia Saudita':'KSA','Cabo Verde':'CPV',
+  'Francia':'FRA','Senegal':'SEN','Noruega':'NOR','Iraq':'IRQ',
+  'Argentina':'ARG','Argelia':'ALG','Austria':'AUT','Jordania':'JOR',
+  'Portugal':'POR','Colombia':'COL','Uzbekistán':'UZB','Congo DR':'COD',
+  'Inglaterra':'ENG','Croacia':'CRO','Panamá':'PAN','Ghana':'GHA',
+};
+
+function buildAlbum() {
+  const sections = [];
+
+  sections.push({
+    id: 'intro', label: 'INTRO', nombre: 'Introducción',
+    stickers: [{ code: '00', desc: 'Portada del álbum' }]
+  });
+
+  const fwc = [];
+  for (let i = 1; i <= 19; i++) fwc.push({ code: `FWC ${i}`, desc: `Copa del Mundo #${i}` });
+  sections.push({ id: 'fwc', label: 'FWC', nombre: 'Copa del Mundo', stickers: fwc });
+
+  for (const [grupo, equipos] of Object.entries(EQUIPOS)) {
+    const stickers = [];
+    for (const equipo of equipos) {
+      const cod = CODIGOS[equipo];
+      for (let i = 1; i <= 20; i++) stickers.push({ code: `${cod} ${i}`, desc: `${equipo} #${i}` });
+    }
+    sections.push({ id: `g${grupo}`, label: `GRP ${grupo}`, nombre: `Grupo ${grupo}`, stickers, equipos });
+  }
+
+  const cc = [];
+  for (let i = 1; i <= 14; i++) cc.push({ code: `CC ${i}`, desc: `Colección Copa #${i}` });
+  sections.push({ id: 'cc', label: 'CC', nombre: 'Colección Copa', stickers: cc });
+
+  return sections;
+}
+
+const SECTIONS = buildAlbum();
+const TOTAL = SECTIONS.reduce((acc, s) => acc + s.stickers.length, 0);
+const allStickers = SECTIONS.flatMap(s => s.stickers);
+
+let state = {};
+let repCounts = {};
+
+function loadState() {
+  try {
+    const s = localStorage.getItem('album26'); if (s) state = JSON.parse(s);
+    const r = localStorage.getItem('album26r'); if (r) repCounts = JSON.parse(r);
+  } catch(e) {}
+}
+
+function saveState() {
+  try {
+    localStorage.setItem('album26', JSON.stringify(state));
+    localStorage.setItem('album26r', JSON.stringify(repCounts));
+  } catch(e) {}
+}
+
+// Render tabs
+function renderTabs() {
+  const bar = document.getElementById('tabs-bar');
+  SECTIONS.forEach((sec, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tab' + (i === 0 ? ' active' : '');
+    btn.textContent = sec.label;
+    btn.onclick = () => {
+      document.querySelectorAll('.tab').forEach((t,j) => t.classList.toggle('active', j===i));
+      document.querySelectorAll('.tab-panel').forEach((p,j) => p.classList.toggle('active', j===i));
+    };
+    bar.appendChild(btn);
+  });
+}
+
+function renderContent() {
+  const content = document.getElementById('content');
+  SECTIONS.forEach((sec, idx) => {
+    const panel = document.createElement('div');
+    panel.className = 'tab-panel' + (idx === 0 ? ' active' : '');
+
+    const card = document.createElement('div');
+    card.className = 'section-card';
+    card.dataset.secIdx = idx;
+
+    const tengoCount = sec.stickers.filter(s => state[s.code]).length;
+    const isCompleto = tengoCount === sec.stickers.length;
+
+    const header = document.createElement('div');
+    header.className = 'section-header';
+    header.innerHTML = `<div class="section-title">${sec.nombre}</div><div class="section-progress ${isCompleto?'completo':''}" id="prog-${idx}">${tengoCount}/${sec.stickers.length}</div>`;
+    card.appendChild(header);
+
+    if (sec.equipos) {
+      for (const equipo of sec.equipos) {
+        const cod = CODIGOS[equipo];
+        const label = document.createElement('div');
+        label.className = 'grupo-label';
+        label.textContent = equipo;
+        card.appendChild(label);
+        const eqStickers = sec.stickers.filter(s => s.code.startsWith(cod + ' '));
+        card.appendChild(buildGrid(eqStickers, idx));
+      }
+    } else {
+      card.appendChild(buildGrid(sec.stickers, idx));
+    }
+
+    panel.appendChild(card);
+    content.appendChild(panel);
+  });
+}
+
+function buildGrid(stickers, secIdx) {
+  const grid = document.createElement('div');
+  grid.className = 'stickers-grid';
+  stickers.forEach(s => {
+    const cell = document.createElement('div');
+    cell.className = 'sticker-cell';
+    cell.dataset.code = s.code;
+    cell.dataset.sec = secIdx;
+    const codeEl = document.createElement('div');
+    codeEl.className = 'sticker-code';
+    codeEl.textContent = s.code;
+    cell.appendChild(codeEl);
+    applyState(cell);
+    cell.onclick = () => openModal(s.code, s.desc);
+    grid.appendChild(cell);
+  });
+  return grid;
+}
+
+function applyState(cell) {
+  const code = cell.dataset.code;
+  const st = state[code];
+  cell.className = 'sticker-cell' + (st ? ' ' + st : '');
+
+  const existing = cell.querySelector('.rep-count');
+  if (existing) existing.remove();
+
+  if (st === 'repetida' && repCounts[code] > 1) {
+    const badge = document.createElement('div');
+    badge.className = 'rep-count';
+    badge.textContent = repCounts[code];
+    cell.appendChild(badge);
+  }
+
+  let codeEl = cell.querySelector('.sticker-code');
+  if (!codeEl) { codeEl = document.createElement('div'); codeEl.className = 'sticker-code'; cell.appendChild(codeEl); }
+  codeEl.textContent = code;
+}
+
+// MODAL
+let modalCode = null, modalDesc = null;
+
+function openModal(code, desc) {
+  modalCode = code; modalDesc = desc;
+  const st = state[code];
+  document.getElementById('modal-title').textContent = code;
+  document.getElementById('modal-desc').textContent = desc;
+  const quitarBtn = document.getElementById('btn-quitar');
+  quitarBtn.style.display = st ? 'block' : 'none';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.getElementById('btn-cancelar').onclick = closeModal;
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  modalCode = null;
+}
+
+function setSticker(newState) {
+  if (!modalCode) return;
+  if (newState === 'repetida') {
+    repCounts[modalCode] = (repCounts[modalCode] || 1) + 1;
+    state[modalCode] = 'repetida';
+  } else if (newState === 'tengo') {
+    state[modalCode] = 'tengo';
+    repCounts[modalCode] = 1;
+  } else {
+    delete state[modalCode];
+    delete repCounts[modalCode];
+  }
+  saveState();
+  refreshCells(modalCode);
+  updateStats();
+  closeModal();
+}
+
+document.getElementById('btn-tengo').onclick = () => setSticker('tengo');
+document.getElementById('btn-repetida').onclick = () => setSticker('repetida');
+document.getElementById('btn-quitar').onclick = () => setSticker('ninguna');
+
+function refreshCells(code) {
+  document.querySelectorAll('.sticker-cell').forEach(cell => {
+    if (cell.dataset.code === code) applyState(cell);
+  });
+}
+
+function updateStats() {
+  let tengo = 0, repExtra = 0;
+  for (const [code, st] of Object.entries(state)) {
+    if (st === 'tengo') { tengo++; }
+    else if (st === 'repetida') {
+      tengo++;
+      repExtra += (repCounts[code] || 1) - 1;
+    }
+  }
+
+  const faltan = TOTAL - tengo;
+  const pct = Math.round((tengo / TOTAL) * 100);
+
+  document.getElementById('stat-tengo').textContent = tengo;
+  document.getElementById('stat-faltan').textContent = faltan;
+  document.getElementById('stat-repetidas').textContent = repExtra;
+  document.getElementById('stat-total').textContent = TOTAL;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${pct}% completado · ${tengo} de ${TOTAL} figuritas`;
+
+  const totalFigs = tengo + repExtra;
+  const paquetes = Math.ceil(totalFigs / 7);
+  document.getElementById('dinero-total').textContent = `$${(paquetes * 2000).toLocaleString('es-AR')}`;
+
+  // Update section progress headers
+  SECTIONS.forEach((sec, idx) => {
+    const tg = sec.stickers.filter(s => state[s.code]).length;
+    const el = document.getElementById(`prog-${idx}`);
+    if (el) {
+      el.textContent = `${tg}/${sec.stickers.length}`;
+      el.className = 'section-progress' + (tg === sec.stickers.length ? ' completo' : '');
+    }
+  });
+}
+
+// BUSCADOR
+document.getElementById('search-input').addEventListener('input', function() {
+  const q = this.value.trim().toUpperCase();
+  const resultsEl = document.getElementById('search-results');
+  if (!q) { resultsEl.style.display = 'none'; return; }
+
+  const matches = allStickers.filter(s =>
+    s.code.toUpperCase().includes(q) || s.desc.toUpperCase().includes(q)
+  ).slice(0, 8);
+
+  if (!matches.length) { resultsEl.style.display = 'none'; return; }
+
+  resultsEl.style.display = 'block';
+  resultsEl.innerHTML = '';
+
+  matches.forEach(s => {
+    const st = state[s.code];
+    const item = document.createElement('div');
+    item.className = 'search-result-item';
+
+    const left = document.createElement('div');
+    left.className = 'left';
+    left.innerHTML = `<span class="code">${s.code}${st === 'tengo' ? ' ✓' : st === 'repetida' ? ' +' : ''}</span><span class="desc">${s.desc}</span>`;
+
+    const btns = document.createElement('div');
+    btns.className = 'btns';
+
+    const btnT = document.createElement('button');
+    btnT.className = 'btn-mini btn-tengo';
+    btnT.textContent = '✓ Tengo';
+    btnT.onclick = (e) => { e.stopPropagation(); srSet(s.code, 'tengo'); };
+
+    const btnR = document.createElement('button');
+    btnR.className = 'btn-mini btn-repetida';
+    btnR.textContent = '+ Rep.';
+    btnR.onclick = (e) => { e.stopPropagation(); srSet(s.code, 'repetida'); };
+
+    btns.appendChild(btnT);
+    btns.appendChild(btnR);
+
+    if (st) {
+      const btnQ = document.createElement('button');
+      btnQ.className = 'btn-mini btn-quitar';
+      btnQ.textContent = '✗';
+      btnQ.onclick = (e) => { e.stopPropagation(); srSet(s.code, 'ninguna'); };
+      btns.appendChild(btnQ);
+    }
+
+    item.appendChild(left);
+    item.appendChild(btns);
+    resultsEl.appendChild(item);
+  });
+});
+
+function srSet(code, newState) {
+  if (newState === 'repetida') {
+    repCounts[code] = (repCounts[code] || 1) + 1;
+    state[code] = 'repetida';
+  } else if (newState === 'tengo') {
+    state[code] = 'tengo';
+    repCounts[code] = 1;
+  } else {
+    delete state[code];
+    delete repCounts[code];
+  }
+  saveState();
+  refreshCells(code);
+  updateStats();
+  document.getElementById('search-input').dispatchEvent(new Event('input'));
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.search-wrap') && !e.target.closest('#search-results')) {
+    document.getElementById('search-results').style.display = 'none';
+  }
+});
+
+// INIT
+loadState();
+renderTabs();
+renderContent();
+updateStats();
+</script>
+
+</body>
+</html>
